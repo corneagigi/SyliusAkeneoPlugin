@@ -93,7 +93,7 @@ final class AddProductGroupsTask implements AkeneoTaskInterface
         return $payload;
     }
 
-    private function createGroupForCode(string $code): void
+    private function createGroupForCodeAndFamily(string $code, string $family): void
     {
         if (isset($this->productGroupsMapping[$code])) {
             return;
@@ -108,6 +108,7 @@ final class AddProductGroupsTask implements AkeneoTaskInterface
 
         $productGroup = new ProductGroup();
         $productGroup->setProductParent($code);
+        $productGroup->setFamily($family);
         $this->entityManager->persist($productGroup);
         $this->productGroupsMapping[$code] = $productGroup;
 
@@ -118,10 +119,10 @@ final class AddProductGroupsTask implements AkeneoTaskInterface
     private function createProductGroups(array $resource): void
     {
         if ($resource['parent'] !== null) {
-            $this->createGroupForCode($resource['parent']);
+            $this->createGroupForCodeAndFamily($resource['parent'], $resource['family']);
         }
         if ($resource['code'] !== null) {
-            $this->createGroupForCode($resource['code']);
+            $this->createGroupForCodeAndFamily($resource['code'], $resource['family']);
         }
     }
 }
